@@ -24,6 +24,20 @@ mongoose.connect(process.env.DATABASEURL, { useNewUrlParser: true }, (err) => {
 //   }
 // );
 
+///////////////////////////////////// HTTP REQUEST VALIDATION ////////////////////////////////////////
+
+const isTokenValid = (req, res, next) => {
+    console.log(req.headers['authorization']);
+    const token = req.headers['authorization'];
+    jwt.verify(token, process.env.KEY,(err,decoded)=>{
+        if(!err){
+            next()
+        } else {
+            res.status(403).send('Forbidden')
+        }
+    })
+}
+
 ////////////////////////////////////// AUTHORS ////////////////////////////////////////
 
 //author scheme
@@ -35,7 +49,7 @@ const authorSchema = mongoose.Schema({
 const Author = mongoose.model("Authors", authorSchema);
 
 //post request authors
-app.post("/authors/create-author", (req, res) => {
+app.post("/authors/create-author", isTokenValid, (req, res) => {
   console.log(req.body);
   const author = new Author({ authorname: req.body.authorname });
   author.save().then((res) => {

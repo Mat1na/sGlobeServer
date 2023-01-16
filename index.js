@@ -58,7 +58,7 @@ app.post("/authors/create-author", isTokenValid, (req, res) => {
 });
 
 //sending authors to rest api
-app.get("/authors/fetch-authors", (req, res) => {
+app.get("/authors/fetch-authors", isTokenValid, (req, res) => {
   Author.find({}).then((items) => {
     res.json(items);
   });

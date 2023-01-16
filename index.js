@@ -157,8 +157,14 @@ app.post('/projects/edit-project/:_id', isTokenValid, (req, res) => {
   console.log(req.body.title)
   Project.findByIdAndUpdate(_id, { title: req.body.title, image: req.body.image, content: req.body.content, summary: req.body.summary, researchers: req.body.researchers, imagetext: req.body.imagetext, imagetextlink: req.body.imagetextlink }, function (err, docs) {
     if (err) {
+      res.json({
+        message: err
+      })
       console.log(err)
     } else {
+      res.json({
+        message:'Updated project'
+      })
       console.log('Updated project')
     }
   })

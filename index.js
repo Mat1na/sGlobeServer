@@ -31,7 +31,7 @@ const isTokenValid = (req, res, next) => {
     const token = req.headers['authorization'];
     jwt.verify(token, process.env.KEY,(err,decoded)=>{
         if(!err){
-          req.user=decoded;
+          res.status(200).send('OK');
             next()
         } else {
             res.status(403).send('Forbidden')

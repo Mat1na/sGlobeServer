@@ -31,7 +31,7 @@ const isTokenValid = (req, res, next) => {
     const token = req.headers['authorization'];
     jwt.verify(token, process.env.KEY,(err,decoded)=>{
         if(!err){
-          res.status(200).send('OK');
+          
             next()
         } else {
             res.status(403).send('Forbidden')
@@ -59,7 +59,7 @@ app.post("/authors/create-author", isTokenValid, (req, res) => {
 });
 
 //sending authors to rest api
-app.get("/authors/fetch-authors", isTokenValid, (req, res) => {
+app.get("/authors/fetch-authors", (req, res) => {
   Author.find({}).then((items) => {
     res.json(items);
   });

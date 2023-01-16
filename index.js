@@ -82,8 +82,14 @@ app.post('/authors/edit-author/:_id', isTokenValid, (req, res) => {
   console.log(req.body.authorname)
   Author.findByIdAndUpdate(_id, { authorname: req.body.authorname }, function (err, docs) {
     if (err) {
+      res.json({
+        message: err
+      })
       console.log(err)
     } else {
+      res.json({
+        message:'Updated user'
+      })
       console.log('Updated user')
     }
   })
@@ -270,9 +276,15 @@ app.put("/labmembers/edit-labmember/:_id", isTokenValid, (req, res) => {
   },
     function (err, docs) {
       if (err) {
-        console.log(err);
+        res.json({
+          message: err
+        })
+        console.log(err)
       } else {
-        console.log("Updated profile");
+        res.json({
+          message:'Updated profile'
+        })
+        console.log('Updated profile')
       }
     }
   );
@@ -366,9 +378,15 @@ app.put("/projects/edit-pub/:_id", isTokenValid, (req, res) => {
     },
     function (err, docs) {
       if (err) {
-        console.log(err);
+        res.json({
+          message: err
+        })
+        console.log(err)
       } else {
-        console.log("Updated project");
+        res.json({
+          message:'Updated project'
+        })
+        console.log('Updated project')
       }
     }
   );

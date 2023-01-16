@@ -12,7 +12,7 @@ const bcrypt = require('bcryptjs')
 
 //db connection (Atlas)
 mongoose.connect(process.env.DATABASEURL, { useNewUrlParser: true }, (err) => {
-    console.log('Connected to database')
+  console.log('Connected to database')
 })
 
 // // db connection (Compass)
@@ -27,16 +27,15 @@ mongoose.connect(process.env.DATABASEURL, { useNewUrlParser: true }, (err) => {
 ///////////////////////////////////// HTTP REQUEST VALIDATION ////////////////////////////////////////
 
 const isTokenValid = (req, res, next) => {
-    console.log(req.headers['authorization']);
-    const token = req.headers['authorization'];
-    jwt.verify(token, process.env.KEY,(err,decoded)=>{
-        if(!err){
-          
-            next()
-        } else {
-            res.status(403).send('Forbidden')
-        }
-    })
+  console.log(req.headers['authorization']);
+  const token = req.headers['authorization'];
+  jwt.verify(token, process.env.KEY, (err, decoded) => {
+    if (!err) {
+      next()
+    } else {
+      res.status(403).send('Forbidden')
+    }
+  })
 }
 
 ////////////////////////////////////// AUTHORS ////////////////////////////////////////
@@ -66,7 +65,7 @@ app.get("/authors/fetch-authors", (req, res) => {
 });
 
 //delete author
-app.delete("/authors/:_id", (req, res) => {
+app.delete("/authors/:_id", isTokenValid, (req, res) => {
   const { _id } = req.params //get id
   Author.findByIdAndDelete(_id)
     .then(result => {
@@ -78,7 +77,7 @@ app.delete("/authors/:_id", (req, res) => {
 })
 
 //update author
-app.post('/authors/edit-author/:_id', (req, res) => {
+app.post('/authors/edit-author/:_id', isTokenValid, (req, res) => {
   const { _id } = req.params
   console.log(req.body.authorname)
   Author.findByIdAndUpdate(_id, { authorname: req.body.authorname }, function (err, docs) {
@@ -108,7 +107,7 @@ const projectSchema = mongoose.Schema({
 const Project = mongoose.model("Projects", projectSchema);
 
 //post request projects
-app.post("/projects/create-project", (req, res) => {
+app.post("/projects/create-project", isTokenValid, (req, res) => {
   console.log(req.body);
   const {
     title,
@@ -141,7 +140,7 @@ app.get("/projects/fetch-projects", (req, res) => {
 });
 
 //delete project
-app.delete("/projects/:_id", (req, res) => {
+app.delete("/projects/:_id", isTokenValid, (req, res) => {
   const { _id } = req.params //get id
   Project.findByIdAndDelete(_id)
     .then(result => {
@@ -153,7 +152,7 @@ app.delete("/projects/:_id", (req, res) => {
 })
 
 //update project
-app.post('/projects/edit-project/:_id', (req, res) => {
+app.post('/projects/edit-project/:_id', isTokenValid, (req, res) => {
   const { _id } = req.params
   console.log(req.body.title)
   Project.findByIdAndUpdate(_id, { title: req.body.title, image: req.body.image, content: req.body.content, summary: req.body.summary, researchers: req.body.researchers, imagetext: req.body.imagetext, imagetextlink: req.body.imagetextlink }, function (err, docs) {
@@ -188,7 +187,7 @@ const profileSchema = mongoose.Schema({
 const Profile = mongoose.model("Profiles", profileSchema);
 
 //post request lab members
-app.post("/labmembers/create-member", (req, res) => {
+app.post("/labmembers/create-member", isTokenValid, (req, res) => {
   console.log(req.body);
   const {
     membername,
@@ -225,16 +224,16 @@ app.post("/labmembers/create-member", (req, res) => {
 app.get("/labmembers/fetch-labmembers", (req, res) => {
   Profile.find({}).then((items) => {
     res.json(items);
-    
-   
+
+
   });
-  
+
 });
 
 
 
 //delete lab member
-app.delete("/labmembers/:_id", (req, res) => {
+app.delete("/labmembers/:_id", isTokenValid, (req, res) => {
   const { _id } = req.params //get id
   Profile.findByIdAndDelete(_id)
     .then(result => {
@@ -246,23 +245,23 @@ app.delete("/labmembers/:_id", (req, res) => {
 })
 
 //update profile
-app.put("/labmembers/edit-labmember/:_id", (req, res) => {
+app.put("/labmembers/edit-labmember/:_id", isTokenValid, (req, res) => {
   const { _id } = req.params;
   console.log(req.body.membername);
   Profile.findByIdAndUpdate(
     _id, {
-      membername: req.body.membername,
-      image: req.body.image,
-      functionbasic: req.body.functionbasic,
-      functionextra: req.body.functionextra,
-      interests: req.body.interests,
-      googlescholar: req.body.googlescholar,
-      researchgate: req.body.researchgate,
-      orcid: req.body.orcid,
-      twitter: req.body.twitter,
-      email: req.body.email,
-      currentmember: req.body.currentmember
-    },
+    membername: req.body.membername,
+    image: req.body.image,
+    functionbasic: req.body.functionbasic,
+    functionextra: req.body.functionextra,
+    interests: req.body.interests,
+    googlescholar: req.body.googlescholar,
+    researchgate: req.body.researchgate,
+    orcid: req.body.orcid,
+    twitter: req.body.twitter,
+    email: req.body.email,
+    currentmember: req.body.currentmember
+  },
     function (err, docs) {
       if (err) {
         console.log(err);
@@ -283,7 +282,7 @@ const publicationSchema = mongoose.Schema({
   journal: String,
   year: String,
   issue: String,
-  abstract: String, 
+  abstract: String,
   link: String,
   image: String,
   authors: Array
@@ -293,7 +292,7 @@ const publicationSchema = mongoose.Schema({
 const Publication = mongoose.model("Publications", publicationSchema);
 
 //post request publications
-app.post("/publications/create-pub", (req, res) => {
+app.post("/publications/create-pub", isTokenValid, (req, res) => {
   console.log(req.body);
   const {
     order,
@@ -330,7 +329,7 @@ app.get("/publications/fetch-publications", (req, res) => {
 });
 
 //delete publication
-app.delete("/publications/:_id", (req, res) => {
+app.delete("/publications/:_id", isTokenValid, (req, res) => {
   const { _id } = req.params //get id
   Publication.findByIdAndDelete(_id)
     .then(result => {
@@ -343,7 +342,7 @@ app.delete("/publications/:_id", (req, res) => {
 
 //update publication
 
-app.put("/projects/edit-pub/:_id", (req, res) => {
+app.put("/projects/edit-pub/:_id", isTokenValid, (req, res) => {
   const { _id } = req.params;
   console.log(req.body.title);
   Publication.findByIdAndUpdate(
@@ -381,9 +380,9 @@ const userSchema = mongoose.Schema({
 const User = mongoose.model("Users", userSchema);
 
 //post request users
-app.post("/users/create-user", (req, res) => {
+app.post("/users/create-user", isTokenValid, (req, res) => {
   console.log(req.body);
-  const password = bcrypt.hashSync(req.body.password,10)
+  const password = bcrypt.hashSync(req.body.password, 10)
   const user = new User({ username: req.body.username, password: password });
   user.save().then((res) => {
     console.log(res, req.body);
@@ -393,38 +392,38 @@ app.post("/users/create-user", (req, res) => {
 app.post('/login', (req, res) => {
   const { user, password } = req.body
   User.find({ username: user })
-      .then(result => {
-          if (result.length > 0) {
-              if (bcrypt.compareSync(password,result[0].password)) {
-                  jwt.sign({ user }, process.env.KEY, {
-                      algorithm: 'HS256',
-                      expiresIn: '1800s'
-                  }, (err, token) => {
-                    res.status(200).json({
-                      token: token
-                  })
-                  })
-              } else {
-                res.status(403).json({
-                  msg: "wrong"
-                })
-              }
-          } else {
-            res.status(403).json({
-              msg: "wrong"
+    .then(result => {
+      if (result.length > 0) {
+        if (bcrypt.compareSync(password, result[0].password)) {
+          jwt.sign({ user }, process.env.KEY, {
+            algorithm: 'HS256',
+            expiresIn: '1800s'
+          }, (err, token) => {
+            res.status(200).json({
+              token: token
             })
-          }
-      })
+          })
+        } else {
+          res.status(403).json({
+            msg: "wrong"
+          })
+        }
+      } else {
+        res.status(403).json({
+          msg: "wrong"
+        })
+      }
+    })
 
 })
 
-app.post('/login/verify-token', (req,res) => {
+app.post('/login/verify-token', (req, res) => {
   console.log(req.body);
   jwt.verify(req.body.token, process.env.KEY, (err, decoded) => {
     if (decoded) {
-      res.json({verify:true})
+      res.json({ verify: true })
     } else {
-      res.json({verify:false})
+      res.json({ verify: false })
     }
   })
 })
